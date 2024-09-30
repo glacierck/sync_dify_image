@@ -1,7 +1,7 @@
 # sync_dify_image
 
 ## 功能
-
+1
 - 从 Docker Hub 拉取镜像
 - 将镜像推送到阿里云 ACR
 - 支持通过 Docker Compose 文件自动解析和同步镜像
