@@ -28,8 +28,9 @@ jobs:
         echo "Images: $images"
         echo "::set-output name=images::$images"
 
-    - name: Log in to Alibaba Cloud ACR
-      run: echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_REGISTRY }} --username ${{ secrets.ACR_USERNAME }} --password-stdin
+    - name: Log in to Alibaba Cloud ACR'
+      run: echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_REGISTRY }} --username zhiyan_ms_arm --password-stdin
+      # run: echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_REGISTRY }} --username ${{ secrets.ACR_USERNAME }} --password-stdin
 
     - name: Pull and push images to Alibaba Cloud ACR
       run: |
@@ -38,7 +39,7 @@ jobs:
           echo "Processing image: $image"
           
           # Pull the image from DockerHub
-          docker pull $image
+          docker pull --platform linux/arm64 $image
           
           # Extract image tag (last part)
           image_tag=$(echo $image | awk -F'/' '{print $NF}')
