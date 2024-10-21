@@ -29,8 +29,7 @@ jobs:
         echo "::set-output name=images::$images"
 
     - name: Log in to Alibaba Cloud ACR'
-      run: echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_REGISTRY }} --username zhiyan_ms_arm --password-stdin
-      # run: echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_REGISTRY }} --username ${{ secrets.ACR_USERNAME }} --password-stdin
+      run: echo "${{ secrets.ACR_PASSWORD }}" | docker login ${{ secrets.ACR_REGISTRY }} --username ${{ secrets.ACR_USERNAME }} --password-stdin
 
     - name: Pull and push images to Alibaba Cloud ACR
       run: |
@@ -39,13 +38,27 @@ jobs:
           echo "Processing image: $image"
           
           # Pull the image from DockerHub
-          docker pull --platform linux/arm64 $image
+          line = "--platform linux/arm64 $image"
+
+          platform=$(echo "$line" | awk -F'--platform[ =]' '{if (NF>1) print $2}' | awk '{print $1}')
+          echo "platform is $platform"
+          # 如果存在架构信息 将架构信息拼到镜像名称前面
+          if [ -z "$platform" ]; then
+              platform_prefix=""
+          else
+              platform_prefix="_${platform//\//_}"
+          fi
+          echo "platform_prefix is $platform_prefix"
+          
+          docker pull $line
           
           # Extract image tag (last part)
           image_tag=$(echo $image | awk -F'/' '{print $NF}')
           
-          # Tag the image for ACR
-          acr_image="${{ secrets.ACR_REGISTRY }}/${{ secrets.ACR_SPACE }}/$image_tag"
+          # Tag the image for ACR zhiyan_ms_arm
+          acr_image="${{ secrets.ACR_REGISTRY }}/${{ secrets.ACR_SPACE }}/$image_tag$platform_prefix"
+          # acr_image="${{ secrets.ACR_REGISTRY }}/zhiyan_ms_arm/$image_tag"
+          
           echo "Tagging image: $acr_image"
           docker tag $image $acr_image
 
