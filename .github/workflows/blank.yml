@@ -35,6 +35,10 @@ jobs:
       run: |
         images="${{ steps.parse_docker_compose.outputs.images }}"
         for image in $images; do
+          if [ -z "$image" ]; then
+            echo "Skipping empty image"
+            continue
+          fi
           echo "Processing image: $image"
           
           # Pull the image from DockerHub
