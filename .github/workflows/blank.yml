@@ -34,7 +34,8 @@ jobs:
     - name: Pull and push images to Alibaba Cloud ACR
       run: |
         images="${{ steps.parse_docker_compose.outputs.images }}"
-        for image in $images; do
+        # for image in $images; do
+        for image in "${images[@]}"; do
           if [ -z "$image" ]; then
             echo "Skipping empty image"
             continue
