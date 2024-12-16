@@ -44,8 +44,8 @@ jobs:
           # Pull the image from DockerHub
           # 构建包含平台信息的拉取命令
           platform="linux/arm64"
-          # line="--platform $platform $image"
-          line="$image"
+          line="--platform $platform $image"
+          # line="$image"
 
           # 提取平台信息
           if [[ $line == *"--platform "* ]]; then
